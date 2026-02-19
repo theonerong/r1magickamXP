@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Magic Kamera</title>
+  <script type="module" crossorigin src="./assets/main-okjTpOlj.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/main-EMfmOPTB.css">
+</head>
+<body>
+    <div id="app">
+        <div class="start-screen" id="start-screen">
+    <div class="camera-animation">
+        <div class="camera-body">
+            <div class="camera-lens">
+                <div class="lens-inner"></div>
+                <div class="lens-reflection"></div>
+            </div>
+            <div class="camera-flash"></div>
+            <div class="camera-button-top"></div>
+            <div class="camera-viewfinder"></div>
+        </div>
+        <div class="sparkles">
+            <div class="sparkle sparkle-1">✨</div>
+            <div class="sparkle sparkle-2">✨</div>
+            <div class="sparkle sparkle-3">✨</div>
+            <div class="sparkle sparkle-4">✨</div>
+        </div>
+    </div>
+    <h1 class="magic-title">✨ Magic Kamera ✨</h1>
+    <p class="start-text">Tutorial located in menu (☰) under settings</p>
+    <button id="start-button" class="start-button">Start Camera</button>    
+</div>
+        <div class="camera-container" id="camera-container" style="display: none;">
+            <video id="video" autoplay playsinline muted></video>
+            <img id="captured-image" style="display: none;" alt="Captured photo">
+            <canvas id="canvas" style="display: none;"></canvas>
+        </div>
+        <p id="status" class="status-text" style="display: none;">Initializing camera...</p>
+        <button id="reset-button" class="reset-button" style="display: none;">New Photo</button>
+        <button id="camera-button" class="camera-button" title="Switch Camera" style="display: none;">📷</button>
+        <button id="menu-button" class="menu-button" title="Menu" style="display: none;">
+    <span class="button-icon">☰</span>
+</button>
+        <!-- Mode Buttons Carousel Container -->
+<div id="mode-carousel" class="mode-carousel" style="display: none;">
+    <div class="mode-carousel-track">
+        <button id="random-toggle" class="mode-button" title="Toggle Random Mode" data-mode="random">
+            <span class="mode-icon">🎲</span>
+            <span class="mode-label">Random</span>
+        </button>
+        <button id="motion-toggle" class="mode-button" title="Motion Detection: OFF" data-mode="motion">
+            <span class="mode-icon">👁️</span>
+            <span class="mode-label">Motion</span>
+        </button>
+        <button id="burst-toggle" class="mode-button" title="Toggle Burst Mode" data-mode="burst">
+            <span class="mode-icon">📸⚡</span>
+            <span class="mode-label">Burst</span>
+        </button>
+        <button id="timer-toggle" class="mode-button" title="Toggle Timer Mode" data-mode="timer">
+            <span class="mode-icon">⏱️</span>
+            <span class="mode-label">Timer</span>
+        </button>
+    </div>
+</div>
+        <button id="gallery-button" class="gallery-button" title="Gallery" style="display: none;">
+    <span class="button-icon">🖼️</span>
+</button>
+        
+        <!-- Style Name Reveal -->
+        <div id="style-reveal" class="style-reveal" style="display: none;">
+            <span id="style-reveal-text"></span>
+        </div>
+        
+        <!-- Timer Countdown -->
+        <div id="timer-countdown" class="timer-countdown" style="display: none;">
+            <span id="timer-countdown-text"></span>
+        </div>
+        
+        <!-- Connection Status -->
+        <div id="connection-status" class="connection-status online" style="display: none;">
+            <span id="connection-text">Online</span>
+        </div>
+
+        <!-- Master Prompt Indicator -->
+        <div id="master-prompt-indicator" class="master-prompt-indicator" style="display: none;">
+            <span>MASTER ON</span>
+        </div>
+        
+        <!-- Updates Available Indicator -->
+        <div id="updates-indicator" class="updates-indicator" style="display: none;">
+            <span>🔴 Updates</span>
+        </div>
+        
+        <!-- Queue Status -->
+        <div id="queue-status" class="queue-status" style="display: none;">
+            <span id="queue-count">0</span> queued
+        </div>
+        
+        <!-- Sync Button -->
+        <button id="sync-button" class="sync-button" title="Sync Queued Photos" style="display: none;">
+            🔄 Sync (<span id="sync-count">0</span>)
+        </button>
+        
+        <!-- Unified Menu -->
+        <div id="unified-menu" class="styles-menu" style="display: none;">
+            <div class="styles-menu-content">
+                <div class="styles-menu-header">
+                    <h2>Menu</h2>
+                    <div class="menu-nav-buttons">
+                        <button id="jump-to-top" class="menu-jump-button" title="Jump to top">↑</button>
+                        <button id="jump-to-bottom" class="menu-jump-button" title="Jump to bottom">↓</button>
+                        <button id="close-menu" class="close-button">×</button>
+                    </div>
+                </div>
+                <div class="styles-menu-scroll-container">
+                <!-- Settings Section -->
+                <div class="menu-section">
+                    <button id="settings-menu-button" class="menu-section-button">
+                        <span class="menu-section-title">Settings</span>
+                        <span class="menu-section-arrow">›</span>
+                    </button>
+                </div>
+
+                <!-- Styles Section -->
+                <div class="menu-section">
+    <h3 class="menu-section-title">AI Styles (<span id="styles-count">0</span>)</h3>
+    <input type="text" id="style-filter" class="style-filter" placeholder="Filter styles...">
+                    <div id="menu-styles-list" class="menu-list">
+                        <!-- Styles will be dynamically added here -->
+                    </div>
+                </div>
+                </div>
+                <div id="menu-category-hint" class="menu-category-footer" style="display: none;"></div>
+            </div>
+        </div>
+
+        <!-- Settings Submenu -->
+        <div id="settings-submenu" class="submenu" style="display: none;">
+            <div class="submenu-content">
+                <div class="submenu-header">
+                    <button id="settings-back" class="back-button">‹ Back</button>
+                    <h3>Settings</h3>
+                </div>
+                <div class="submenu-list">
+                    <!-- Resolution Settings -->
+                    <div class="menu-section">
+                        <button id="resolution-settings-button" class="menu-section-button">
+                            <span class="menu-section-title">Resolution</span>
+                            <span id="current-resolution-display" class="menu-section-value">640x480</span>
+                            <span class="menu-section-arrow">›</span>
+                        </button>
+                    </div>
+
+                 <!-- Aspect Ratio Settings -->
+                 <div class="menu-section">
+                        <button id="aspect-ratio-settings-button" class="menu-section-button">
+                            <span class="menu-section-title">Aspect Ratio</span>
+                            <span id="current-aspect-ratio-display" class="menu-section-value">None</span>
+                            <span class="menu-section-arrow">›</span>
+                        </button>
+                 </div>
+
+                    <!-- White Balance Settings - COMMENTED OUT -->
+                    <!-- <div class="menu-section">
+                        <button id="white-balance-settings-button" class="menu-section-button">
+                            <span class="menu-section-title">White Balance</span>
+                            <span id="current-white-balance-display" class="menu-section-value">Auto</span>
+                            <span class="menu-section-arrow">›</span>
+                        </button>
+                    </div> -->
+                    
+                    <!-- Burst Settings -->
+                    <div class="menu-section">
+                        <button id="burst-settings-button" class="menu-section-button">
+                            <span class="menu-section-title">Burst Settings</span>
+                            <span id="current-burst-display" class="menu-section-value">5 photos, Medium</span>
+                            <span class="menu-section-arrow">›</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Timer Settings -->
+                    <div class="menu-section">
+                        <button id="timer-settings-button" class="menu-section-button">
+                            <span class="menu-section-title">Timer Settings</span>
+                            <span id="current-timer-display" class="menu-section-value">10s, No Repeat</span>
+                            <span class="menu-section-arrow">›</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Master Prompt Settings -->
+                    <div class="menu-section">
+                        <button id="master-prompt-settings-button" class="menu-section-button">
+                            <span class="menu-section-title">Master Prompt</span>
+                            <span id="current-master-prompt-display" class="menu-section-value">Disabled</span>
+                            <span class="menu-section-arrow">›</span>
+                        </button>
+                    </div>
+
+                    <!-- Motion Detection Settings -->
+                    <div class="menu-section">
+                        <button id="motion-settings-button" class="menu-section-button">
+                            <span class="menu-section-title">Motion Detection</span>
+                            <span id="current-motion-display" class="menu-section-value">Sensitivity: Medium</span>
+                            <span class="menu-section-arrow">›</span>
+                        </button>
+                    </div>
+
+                    <!-- Visible Presets Settings -->
+                    <div class="menu-section">
+                       <button id="visible-presets-settings-button" class="menu-section-button">
+                           <span class="menu-section-title">Visible Presets</span>
+                           <span id="current-visible-presets-display" class="menu-section-value">All Visible</span>
+                           <span class="menu-section-arrow">›</span>
+                       </button>
+                    </div>
+
+                    <!-- Preset Builder -->
+                    <div class="menu-section">
+                        <button id="preset-builder-button" class="menu-section-button">
+                            <span class="menu-section-title">Preset Builder</span>
+                            <span class="menu-section-arrow">›</span>
+                        </button>
+                    </div>
+                   
+                     <!-- No Magic Toggle -->
+                    <div class="menu-section">
+                        <button id="no-magic-toggle-button" class="menu-section-button">
+                            <span class="menu-section-title">No Magic Mode</span>
+                            <span id="no-magic-status" class="menu-section-value">Disabled</span>
+                        </button>
+                    </div>
+
+                    <!-- Import Settings -->
+                    <div class="menu-section">
+                        <button id="import-resolution-settings-button" class="menu-section-button">
+                            <span class="menu-section-title">Import Settings</span>
+                            <span id="current-import-resolution-display" class="menu-section-value">VGA</span>
+                            <span class="menu-section-arrow">›</span>
+                        </button>
+                    </div>
+
+                    <!-- Factory Reset Presets -->
+                    <div class="menu-section">
+                        <button id="factory-reset-button" class="menu-section-button">
+                            <span class="menu-section-title">Reset Database</span>
+                            <span class="menu-section-arrow">›</span>
+                        </button>
+                    </div>
+
+                    <!-- Import Presets -->
+                    <div class="menu-section">
+                        <button id="import-presets-button" class="menu-section-button">
+                            <span class="menu-section-title">📥 Import Presets</span>
+                            <span class="menu-section-value">Load from our Library</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Check for Updates -->
+                    <div class="menu-section">
+                        <button id="check-updates-button" class="menu-section-button">
+                            <span class="menu-section-title">🔄 Check for Updates</span>
+                            <span class="menu-section-value" id="updates-status">Check Library</span>
+                        </button>
+                    </div>
+
+                    <!-- Tutorial -->
+                    <div class="menu-section">
+                        <button id="tutorial-button" class="menu-section-button">
+                            <span class="menu-section-title">Tutorial</span>
+                            <span class="menu-section-value">Learn how to use</span>
+                            <span class="menu-section-arrow">›</span>
+                        </button>
+                    </div>
+
+               </div>
+            </div>
+        </div>
+        
+         <!-- Resolution Submenu -->
+        <div id="resolution-submenu" class="submenu" style="display: none;">
+            <div class="submenu-content">
+                <div class="submenu-header">
+                    <button id="resolution-back" class="back-button">‹ Back</button>
+                    <h3>Resolution</h3>
+                </div>
+                <div id="resolution-list" class="submenu-list">
+                    <!-- Resolution options will be dynamically added here -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Aspect Ratio Submenu -->        
+<div id="aspect-ratio-submenu" class="submenu" style="display: none;">
+    <div class="submenu-content">
+        <div class="submenu-header">
+            <button id="aspect-ratio-back" class="back-button">‹ Back</button>
+            <h3>Aspect Ratio</h3>
+        </div>
+        <div class="submenu-list">
+            <label class="resolution-item" style="cursor: pointer; display: flex; align-items: center;">
+                <input type="checkbox" id="aspect-ratio-1-1" name="aspect-ratio" style="width: 18px; height: 18px; margin-right: 12px;">
+                <span>1:1 - Square</span>
+            </label>
+            <label class="resolution-item" style="cursor: pointer; display: flex; align-items: center;">
+                <input type="checkbox" id="aspect-ratio-16-9" name="aspect-ratio" style="width: 18px; height: 18px; margin-right: 12px;">
+                <span>16:9 - Letterbox</span>
+            </label>
+        </div>
+    </div>
+</div>
+
+        <!-- Burst Submenu -->
+        <div id="burst-submenu" class="submenu" style="display: none;">
+            <div class="submenu-content">
+                <div class="submenu-header">
+                    <button id="burst-back" class="back-button">‹ Back</button>
+                    <h3>Burst Settings</h3>
+                </div>
+                <div class="submenu-list">
+                    <div class="burst-setting-item">
+                        <label for="burst-count-slider">Photos per burst: <span id="burst-count-value">5</span></label>
+                        <input type="range" id="burst-count-slider" min="2" max="10" value="5" step="1">
+                    </div>
+                    <div class="burst-setting-item">
+                        <label for="burst-speed-slider">Burst speed: <span id="burst-speed-value">Medium</span></label>
+                        <input type="range" id="burst-speed-slider" min="1" max="3" value="2" step="1">
+                        <div class="burst-speed-labels">
+                            <span>Slow</span>
+                            <span>Medium</span>
+                            <span>Fast</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- White Balance Submenu - COMMENTED OUT -->
+        <!-- <div id="white-balance-submenu" class="submenu" style="display: none;">
+            <div class="submenu-content">
+                <div class="submenu-header">
+                    <button id="white-balance-back" class="back-button">‹ Back</button>
+                    <h3>White Balance</h3>
+                </div>
+                <div id="white-balance-list" class="submenu-list">
+                    White balance options will be dynamically added here
+                </div>
+            </div>
+        </div> -->
+
+        <!-- Timer Settings Submenu -->
+<div id="timer-settings-submenu" class="submenu" style="display: none;">
+    <div class="submenu-content">
+        <div class="submenu-header">
+            <button id="timer-settings-back" class="back-button">‹ Back</button>
+            <h3>Timer Settings</h3>
+        </div>
+        <div class="submenu-list">
+            <div class="burst-setting-item">
+                <label for="timer-delay-slider">Timer Delay: <span id="timer-delay-value">10</span>s</label>
+                <input type="range" id="timer-delay-slider" min="1" max="3" value="3" step="1">
+                <div class="burst-speed-labels">
+                    <span>3s</span>
+                    <span>5s</span>
+                    <span>10s</span>
+                </div>
+            </div>
+            <div class="burst-setting-item">
+                <label class="master-prompt-checkbox-label">
+                    <input type="checkbox" id="timer-repeat-enabled" class="master-prompt-checkbox">
+                    <span>Repeat Timer (continuous capture)</span>
+                </label>
+                <p class="setting-hint">When enabled, timer automatically repeats after each photo. Click timer button to stop.</p>
+            </div>
+            <!-- ADD THIS NEW SECTION -->
+            <div class="burst-setting-item">
+    <label for="timer-repeat-interval-input">Repeat Interval</label>
+    <div style="display: flex; gap: 2vw; align-items: center;">
+        <input type="number" id="timer-repeat-interval-input" min="1" max="9999" value="1" style="flex: 1; padding: 3vw; font-size: 4vw; background-color: #222; color: #fff; border: 1px solid #444; border-radius: 2vw;">
+        <select id="timer-repeat-interval-unit" style="padding: 3vw; font-size: 4vw; background-color: #222; color: #fff; border: 1px solid #444; border-radius: 2vw;">
+            <option value="1">Seconds</option>
+            <option value="60">Minutes</option>
+            <option value="3600">Hours</option>
+        </select>
+    </div>
+    <p class="setting-hint">Time to wait between repeated captures.</p>
+</div>
+        </div>
+    </div>
+</div>
+        
+                <!-- Master Prompt Submenu -->        
+<div id="master-prompt-submenu" class="submenu" style="display: none;">
+    <div class="submenu-content">
+        <div class="submenu-header">
+            <button id="master-prompt-back" class="back-button">‹ Back</button>
+            <h3>Master Prompt</h3>
+        </div>
+        <div class="submenu-list">
+            <div class="master-prompt-setting-item">
+                <label class="master-prompt-checkbox-label">
+                    <input type="checkbox" id="master-prompt-enabled" class="master-prompt-checkbox">
+                    <span>Enable Master Prompt</span>
+                </label>
+            </div>
+            <div class="master-prompt-setting-item">
+                <label for="master-prompt-text">Master Prompt Text:</label>
+                <textarea id="master-prompt-text" class="master-prompt-textarea" placeholder="Enter text to append to all prompts..." maxlength="900"></textarea>
+                <div class="master-prompt-char-count">
+                    <span id="master-prompt-char-count">0</span> / 900 characters
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <!-- Motion Detection Submenu -->
+        <div id="motion-submenu" class="submenu" style="display: none;">
+            <div class="submenu-content">
+                <div class="submenu-header">
+                    <button id="motion-back" class="back-button">‹ Back</button>
+                    <h3>Motion Detection</h3>
+                </div>
+                <div class="submenu-list">
+                    <div class="burst-setting-item">
+                        <label for="motion-sensitivity-slider">Sensitivity: <span id="motion-sensitivity-value">Medium</span></label>
+                        <input type="range" id="motion-sensitivity-slider" min="1" max="5" value="3" step="1">
+                        <div class="burst-speed-labels">
+                            <span>Very Low</span>
+                            <span>Low</span>
+                            <span>Medium</span>
+                            <span>High</span>
+                            <span>Very High</span>
+                        </div>
+                        <p class="setting-hint">Higher sensitivity detects smaller movements.</p>
+                    </div>
+                    <div class="burst-setting-item">
+                        <label for="motion-start-delay-slider">Start Delay: <span id="motion-start-delay-value">3s</span></label>
+                        <input type="range" id="motion-start-delay-slider" min="1" max="8" value="1" step="1">
+                        <div class="burst-speed-labels">
+                            <span>3s</span>
+                            <span>10s</span>
+                            <span>30s</span>
+                            <span>1m</span>
+                            <span>5m</span>
+                            <span>10m</span>
+                            <span>15m</span>
+                            <span>30m</span>
+                        </div>
+                        <p class="setting-hint">Time to wait before motion detection starts after enabling.</p>
+                    </div>
+                    <div class="burst-setting-item">
+                        <label class="master-prompt-checkbox-label">
+                            <input type="checkbox" id="motion-continuous-enabled" class="master-prompt-checkbox">
+                            <span>Continuous Capture</span>
+                        </label>
+                        <p class="setting-hint">When enabled, continues taking photos without requiring "New Photo" button press.</p>
+                    </div>
+                    <div class="burst-setting-item">
+                        <label for="motion-cooldown-slider">Cooldown: <span id="motion-cooldown-value">2s</span></label>
+                        <input type="range" id="motion-cooldown-slider" min="1" max="10" value="2" step="1">
+                        <div class="burst-speed-labels">
+                            <span>1s</span>
+                            <span>5s</span>
+                            <span>10s</span>
+                        </div>
+                        <p class="setting-hint">Time to wait before detecting motion again after a capture.</p>
+                    </div>
+                </div>
+            </div>
+        </div>         
+
+        <!-- Visible Presets Submenu -->
+<div id="visible-presets-submenu" class="submenu" style="display: none;">
+    <div class="submenu-content">
+        <div class="submenu-header">
+    <button id="visible-presets-back" class="back-button">‹ Back</button>
+    <h3>Visible Presets (<span id="visible-presets-count">0</span>)</h3>
+    <div class="menu-nav-buttons">
+        <button id="visible-presets-jump-up" class="menu-jump-button" title="Scroll up">↑</button>
+        <button id="visible-presets-jump-down" class="menu-jump-button" title="Scroll down">↓</button>
+    </div>
+</div>
+        <div class="submenu-list">
+            <div class="burst-setting-item" style="margin-bottom: 3vh;">
+                <div style="display: flex; gap: 2vw;">
+                    <button id="visible-presets-select-all" class="batch-control-button" style="flex: 1;">Select All</button>
+                    <button id="visible-presets-deselect-all" class="batch-control-button" style="flex: 1;">Deselect All</button>
+                </div>
+            </div>
+            <input type="text" id="visible-presets-filter" class="style-filter" placeholder="Filter presets...">
+            <div id="visible-presets-list" class="menu-list">
+                <!-- Presets will be dynamically added here -->
+            </div>
+        </div>
+        <div id="visible-presets-category-hint" class="visible-presets-footer" style="display: none;"></div>
+    </div>
+</div>
+
+        <!-- Preset Builder Submenu -->
+        <div id="preset-builder-submenu" class="submenu" style="display: none;">
+            <div class="submenu-content">
+                <div class="submenu-header">
+    <button id="preset-builder-back" class="back-button">‹ Back</button>
+    <h3>Preset Builder</h3>
+    <div class="menu-nav-buttons">
+        <button id="preset-builder-delete" class="menu-jump-button" style="display: none; background: #d32f2f;">Delete</button>
+        <button id="preset-builder-save" class="menu-jump-button">Save</button>
+        <button id="preset-builder-clear" class="menu-jump-button">Clear</button>
+    </div>
+</div>
+                <div class="preset-builder-container">
+                    <!-- Sticky Prompt Field -->
+                    <div class="preset-builder-sticky-prompt">
+                        <textarea id="preset-builder-prompt" class="preset-builder-prompt-sticky" placeholder="Your complete AI prompt will appear here..."></textarea>
+                    </div>
+                    
+                    <div class="preset-builder-form">
+                        <!-- Preset Name -->
+                        <div class="preset-builder-field">
+                            <label for="preset-builder-name" class="preset-builder-label">Preset Name</label>
+                            <input type="text" id="preset-builder-name" class="preset-builder-input" placeholder="My Custom Preset">
+                        </div>
+
+                        <!-- Category -->
+                        <div class="preset-builder-field" style="position: relative;">
+                            <label for="preset-builder-category" class="preset-builder-label">Category</label>
+                            <input type="text" id="preset-builder-category" class="preset-builder-input" placeholder="CUSTOM, ART, HUMOR (comma-separated)">
+                            <div id="category-autocomplete" class="category-autocomplete" style="display: none;"></div>
+                        </div>
+
+                        <!-- Template Selection -->
+                        <div class="preset-builder-field">
+                            <label for="preset-builder-template" class="preset-builder-label">Prompt Template</label>
+                            <select id="preset-builder-template" class="preset-builder-select">
+                                <option value="">-- Choose a starting template --</option>
+                                <option value="transform">Transform the image</option>
+                                <option value="transform_subject">Transform the subject</option>
+                                <option value="convert">Convert the scene</option>
+                                <option value="style">Apply artistic style</option>
+                                <option value="place">Place subject in scene</option>
+                                <option value="recreate">Recreate famous work</option>
+                                <option value="render">Render as format/medium</option>
+                                <option value="make">Make subject into character</option>
+                                <option value="analyze">Analyze and process (AI utility)</option>
+                                <option value="custom">Start from scratch</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Options Section -->
+                        <div class="preset-builder-field">
+                            <div class="chip-section" id="preset-options-section">
+                                <button class="chip-section-header" onclick="toggleOptionsSection()">
+                                    <span>🎲 Options (Randomize)</span>
+                                    <span style="font-size: 0.8em; color: #888; margin-left: auto; margin-right: 10px;">Click to expand</span>
+                                    <span class="chip-section-arrow" id="preset-options-arrow">›</span>
+                                </button>
+                                <div class="chip-section-content" id="preset-options-section-content" style="display: none;">
+                                    <!-- Randomize Toggle -->
+                                    <div class="preset-option-toggle-row">
+                                        <label class="preset-option-toggle-label">
+                                            <input type="checkbox" id="preset-randomize-toggle" checked>
+                                            <span>🎲 Randomize options when using this preset</span>
+                                        </label>
+                                    </div>
+                                    
+                                    <!-- Options List -->
+                                    <div id="preset-options-list" class="preset-options-list">
+                                        <!-- Options added dynamically -->
+                                    </div>
+                                    
+                                    <!-- Add Option Button -->
+                                    <button type="button" class="preset-option-add-btn" onclick="addOptionRow()">
+                                        + Add Option
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Collapsible Chip Sections -->
+                        <div class="preset-builder-field">
+                            <div class="chip-section">
+                                <button class="chip-section-header" data-section="preservation">
+                                    <span>Subject Preservation</span>
+                                    <span class="chip-section-arrow">›</span>
+                                </button>
+                                <div class="chip-section-content" id="section-preservation" style="display: none;">
+                                    <div class="preset-builder-chips">
+                                        <button class="preset-chip" data-text="Preserve the subject's recognizable facial features, proportions, and identity. ">Preserve Identity</button>
+                                        <button class="preset-chip" data-text="Preserve the subject's recognizable facial structure and identity. ">Preserve Face</button>
+                                        <button class="preset-chip" data-text="Preserve the subject's recognizable facial features, expression, and identity. ">Preserve Expression</button>
+                                        <button class="preset-chip" data-text="Preserve the subject's body proportions and personality. ">Preserve Proportions</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="chip-section">
+                                <button class="chip-section-header" data-section="quality">
+                                    <span>Visual Quality</span>
+                                    <span class="chip-section-arrow">›</span>
+                                </button>
+                                <div class="chip-section-content" id="section-quality" style="display: none;">
+                                    <div class="preset-builder-chips">
+                                        <button class="preset-chip" data-text="Make it photorealistic. ">Photorealistic</button>
+                                        <button class="preset-chip" data-text="Use realistic lighting, depth, and perspective. ">Realistic Lighting</button>
+                                        <button class="preset-chip" data-text="Use dramatic lighting, shadows, and atmospheric effects. ">Dramatic Lighting</button>
+                                        <button class="preset-chip" data-text="Use soft, cinematic lighting with shallow depth of field. ">Cinematic Lighting</button>
+                                        <button class="preset-chip" data-text="Use realistic shadows and reflections. ">Shadows & Reflections</button>
+                                        <button class="preset-chip" data-text="Use high-key lighting and realistic textures. ">High-Key Lighting</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="chip-section">
+                                <button class="chip-section-header" data-section="color">
+                                    <span>Color & Tone</span>
+                                    <span class="chip-section-arrow">›</span>
+                                </button>
+                                <div class="chip-section-content" id="section-color" style="display: none;">
+                                    <div class="preset-builder-chips">
+                                        <button class="preset-chip" data-text="Use vibrant, bold colors. ">Vibrant Colors</button>
+                                        <button class="preset-chip" data-text="Use muted, desaturated tones. ">Muted Tones</button>
+                                        <button class="preset-chip" data-text="Use realistic, natural colors. ">Natural Colors</button>
+                                        <button class="preset-chip" data-text="Use warm, luminous tones. ">Warm Tones</button>
+                                        <button class="preset-chip" data-text="Use subtle color palettes with detailed textures. ">Subtle Palette</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="chip-section">
+                                <button class="chip-section-header" data-section="composition">
+                                    <span>Composition & Detail</span>
+                                    <span class="chip-section-arrow">›</span>
+                                </button>
+                                <div class="chip-section-content" id="section-composition" style="display: none;">
+                                    <div class="preset-builder-chips">
+                                        <button class="preset-chip" data-text="Optimize for small screens with clear composition and readable details. ">Small Screen Optimized</button>
+                                        <button class="preset-chip" data-text="Use clean composition with bold shapes and immediate readability. ">Bold Composition</button>
+                                        <button class="preset-chip" data-text="Use dynamic composition with expressive energy. ">Dynamic Composition</button>
+                                        <button class="preset-chip" data-text="Use shallow depth of field with soft focus. ">Shallow Depth</button>
+                                        <button class="preset-chip" data-text="High detail with sharp focus throughout. ">High Detail</button>
+                                        <button class="preset-chip" data-text="Use realistic scale, depth, and immersion. ">Realistic Scale</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="chip-section">
+                                <button class="chip-section-header" data-section="integration">
+                                    <span>Integration & Context</span>
+                                    <span class="chip-section-arrow">›</span>
+                                </button>
+                                <div class="chip-section-content" id="section-integration" style="display: none;">
+                                    <div class="preset-builder-chips">
+                                        <button class="preset-chip" data-text="Match lighting, perspective, and camera style of the environment. ">Match Environment</button>
+                                        <button class="preset-chip" data-text="Integrate naturally into the scene with consistent lighting. ">Natural Integration</button>
+                                        <button class="preset-chip" data-text="Include environmental context and atmospheric effects. ">Add Context</button>
+                                        <button class="preset-chip" data-text="Blend naturally into the era's aesthetic. ">Period Authentic</button>
+                                        <button class="preset-chip" data-text="Ensure the subject feels fully integrated into the world. ">Full Integration</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="chip-section">
+                                <button class="chip-section-header" data-section="texture">
+                                    <span>Texture & Materials</span>
+                                    <span class="chip-section-arrow">›</span>
+                                </button>
+                                <div class="chip-section-content" id="section-texture" style="display: none;">
+                                    <div class="preset-builder-chips">
+                                        <button class="preset-chip" data-text="Use realistic textures and materials. ">Realistic Textures</button>
+                                        <button class="preset-chip" data-text="Use realistic toy textures with reflections. ">Toy Textures</button>
+                                        <button class="preset-chip" data-text="Use painterly texture with visible brushstrokes. ">Painterly Texture</button>
+                                        <button class="preset-chip" data-text="Use smooth, polished surfaces. ">Smooth Surfaces</button>
+                                        <button class="preset-chip" data-text="Use weathered, aged appearance. ">Aged/Weathered</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="chip-section">
+                                <button class="chip-section-header" data-section="environment">
+                                    <span>Environment & Atmosphere</span>
+                                    <span class="chip-section-arrow">›</span>
+                                </button>
+                                <div class="chip-section-content" id="section-environment" style="display: none;">
+                                    <div class="preset-builder-chips">
+                                        <button class="preset-chip" data-text="Place the subject in a realistic environment with proper lighting and shadows. ">Add Environment</button>
+                                        <button class="preset-chip" data-text="Include atmospheric effects and environmental context. ">Atmospheric Effects</button>
+                                        <button class="preset-chip" data-text="Use appropriate background that supports the scene. ">Contextual Background</button>
+                                        <button class="preset-chip" data-text="Create a cinematic atmosphere with depth and mood. ">Cinematic Atmosphere</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="chip-section">
+                                <button class="chip-section-header" data-section="technical">
+                                    <span>Technical Instructions</span>
+                                    <span class="chip-section-arrow">›</span>
+                                </button>
+                                <div class="chip-section-content" id="section-technical" style="display: none;">
+                                    <div class="preset-builder-chips">
+                                        <button class="preset-chip" data-text="Render with photorealistic detail and accurate materials. ">Photorealistic Render</button>
+                                        <button class="preset-chip" data-text="Use consistent perspective and accurate proportions throughout. ">Accurate Perspective</button>
+                                        <button class="preset-chip" data-text="Ensure all elements are properly scaled and integrated. ">Proper Scale</button>
+                                        <button class="preset-chip" data-text="Maintain anatomical accuracy and realistic body proportions. ">Anatomically Accurate</button>
+                                        <button class="preset-chip" data-text="Apply physically accurate lighting and shadow behavior. ">Physically Accurate</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="chip-section">
+                                <button class="chip-section-header" data-section="output">
+                                    <span>Output Quality</span>
+                                    <span class="chip-section-arrow">›</span>
+                                </button>
+                                <div class="chip-section-content" id="section-output" style="display: none;">
+                                    <div class="preset-builder-chips">
+                                        <button class="preset-chip" data-text="High detail, sharp focus. ">High Detail</button>
+                                        <button class="preset-chip" data-text="Professional quality, clean composition. ">Professional Quality</button>
+                                        <button class="preset-chip" data-text="Artistic interpretation, painterly. ">Artistic/Painterly</button>
+                                        <button class="preset-chip" data-text="Stylized, exaggerated features. ">Stylized/Exaggerated</button>
+                                        <button class="preset-chip" data-text="Realistic, natural appearance. ">Realistic/Natural</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Prompt Tips -->
+                        <div class="preset-builder-tips">
+                            <p class="preset-builder-tip-title">💡 Prompt Tips:</p>
+                            <ul class="preset-builder-tip-list">
+                                <li>Be specific about visual details</li>
+                                <li>Include style references when relevant</li>
+                                <li>Mention "preserve subject identity" if needed</li>
+                                <li>Specify "photorealistic" or artistic style</li>
+                                <li>Consider small screen clarity</li>
+                                <li><strong>Random Selection:</strong> Use 🎲 templates for variety across photos</li>
+                                <li><strong>Even/Odd:</strong> Perfect for 2 options (50/50 split)</li>
+                                <li><strong>Last Digit:</strong> Use for 2-10 options with LAST DIGIT modulo</li>
+                                <li><strong>Last Two Digits:</strong> Use for 11-100 options with LAST TWO DIGITS modulo</li>
+                                <li><strong>Last Three Digits:</strong> Use for 100+ options with LAST THREE DIGITS modulo</li>
+                                <li><strong>Critical Formatting:</strong> Colon immediately after modulo number, 2 spaces before dash, no blank lines between options</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Import Resolution Submenu -->
+        <div id="import-resolution-submenu" class="submenu" style="display: none;">
+            <div class="submenu-content">
+                <div class="submenu-header">
+                    <button id="import-resolution-back" class="back-button">‹ Back</button>
+                    <h3>Import Settings</h3>
+                </div>
+                <div class="submenu-list">
+                    <!-- Import Resolution List -->
+                    <h4 style="padding: 2vw; color: #FE5F00; font-size: 4vw;">Import Resolution</h4>
+                    <div id="import-resolution-list">
+                        <!-- Import resolution options will be dynamically added here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tutorial Submenu -->
+        <div id="tutorial-submenu" class="submenu" style="display: none;">
+            <div class="submenu-content">
+                <div class="submenu-header">
+                    <button id="tutorial-back" class="back-button">‹ Back</button>
+                    <h3>Tutorial</h3>
+                    <button id="back-to-glossary" class="back-to-glossary" style="display: none;">← Index</button>
+                </div>
+                <!-- Glossary Menu -->
+                <div id="tutorial-glossary" class="tutorial-glossary">
+                    <h4 class="glossary-title">Quick Navigation</h4>
+                    <div class="glossary-items">
+                        <button class="glossary-item" data-section="getting-started">🚀 Getting Started</button>
+                        <button class="glossary-item" data-section="basic-controls">📸 Basic Controls</button>
+                        <button class="glossary-item" data-section="ai-presets">✨ AI Presets</button>
+                        <button class="glossary-item" data-section="special-modes">🎯 Special Modes</button>
+                        <button class="glossary-item" data-section="gallery-features">🖼️ Gallery Features</button>
+                        <button class="glossary-item" data-section="uploading-images">📥 Uploading Images</button>
+                        <button class="glossary-item" data-section="edit-image">✏️ Edit Image Features</button>
+                        <button class="glossary-item" data-section="settings">⚙️ Settings</button>
+                        <button class="glossary-item" data-section="tips-tricks">💡 Tips & Tricks</button>
+                        <button class="glossary-item" data-section="advanced-features">🔧 Advanced Features</button>
+                        <button class="glossary-item" data-section="troubleshooting">🔍 Troubleshooting</button>
+                    </div>
+                </div>
+                <!-- Tutorial Content -->
+                <div id="tutorial-content-area" class="tutorial-content-area" style="display: none;">
+                <div class="submenu-list tutorial-content">
+                    
+                    <!-- Getting Started -->
+                    <div id="section-getting-started" class="tutorial-section">
+                        <h4 class="tutorial-heading">🚀 Getting Started</h4>
+                        <p class="tutorial-text">
+                            Magic Kamera MDRE is a powerful plugin for the Rabbit r1 that transforms your photos with many AI-powered presets. Point, shoot, and watch your images come to life with artistic styles, effects, and transformations. Customize captured photos to create your own presets or re-prompt captured photo. Can also work as a security device with motion detection. A collaboration between M Domko, Ron G, WWTV and RabbitJesus(JET).
+                        </p>
+                    </div>
+
+                    <!-- Basic Controls -->
+                   <div id="section-basic-controls" class="tutorial-section">
+                        <h4 class="tutorial-heading">📸 Basic Controls</h4>
+                        <p class="tutorial-text">
+                            <strong>Press Side Button:</strong> Take a photo<br>
+                            <strong>Scroll Wheel Up/Down:</strong> Change AI presets<br>
+                            <strong>Camera Button (📷):</strong> Switch between front (selfie)/back camera<br>
+                            <strong>Menu Button (☰):</strong> Access settings and presets<br>
+                            <strong>Gallery Button (🖼️):</strong> View/Modify/Delete saved photos and re-prompt<br>
+                            <strong>New Photo Button:</strong> Return to camera after capture. Can also be done with side button.
+                        </p>
+                    </div>
+
+                    <!-- AI Presets -->
+                   <div id="section-ai-presets" class="tutorial-section">
+                        <h4 class="tutorial-heading">✨ AI Presets</h4>
+                        <p class="tutorial-text">
+                            Browse over 800 unique and fun AI presets! Scroll through styles like Impressionism, Cyberpunk, Anime Art, Watercolor, Caricature, and much more. The current preset name appears at the bottom of the main screen. Each preset transforms your photo with a specific artistic style or effect. Some presets are created to truly randomize(using the RonDom Method©) options within the preset.   
+                        </p>
+                    </div>
+
+                    <!-- Special Modes -->
+                    <div id="section-special-modes" class="tutorial-section">
+                        <h4 class="tutorial-heading">🎯 Special Modes</h4>
+                        <h5 style="color: #ffffff; font-style: italic; margin-bottom: 10px; font-size: 6vw; font-weight: 700;">
+    *Swipe Left from Right-Edge of Main Screen to reveal modes*
+</h5>
+                        <p class="tutorial-text">
+                            <strong>🎲 Random Mode:</strong> Surprises you with a random preset for each photo, selecting from favorites only if favorites selected. If no favorites are selected, selecting from all presets.<br>
+                            <strong>⏱️ Timer Mode:</strong> Set a countdown (3-10s) and optional repeat intervals<br>
+                            <strong>📸⚡ Burst Mode:</strong> Capture 3-10 photos rapidly (slow/medium/fast)<br>
+                            <strong>👁️ Motion Detection:</strong> Automatically captures when movement is detected. Interval settings for repeat capture. Repeat capture is default. You must uncheck repeat capture to do single capture. Select start delay from 3 seconds to 30 minutes. This mode triggers when you press the eye icon and activates/starts when you press the side button. Motion detection deactivates/stops when you press the eye icon again. The eye pulses if motion detection is triggered. Best if used with NO MAGIC MODE enabled. 
+                        </p>
+                    </div>
+
+                    <!-- Gallery Features -->
+                    <div id="section-gallery-features" class="tutorial-section">
+                        <h4 class="tutorial-heading">🖼️ Gallery Features</h4>
+                        <p class="tutorial-text">
+                            <strong>View Photos:</strong> Tap any image to view full-screen<br>
+                            <strong>Import Photos:</strong> Click on import button(full instructions under Uploading Images below)<br>     
+                            <strong>Apply Presets:</strong> Transform saved photos with "Load Preset" or "Multi Preset". Click twice on preset to apply.<br>
+                            <strong>Batch Operations:</strong> Select multiple images to apply one preset or single/batch delete. Click on select button to do this. And make sure to click DONE button, when done (if not, the program returns to select screen and not to prior screen). When applying presets, click twice on preset to apply.<br>
+                            <strong>Sort & Filter:</strong> Organize by newest/oldest, filter by date range (if selecting a date, make sure to select the next day as well. Example: If you want all images from December 25, then choose From December 25 to December 26.)<br>
+                            <strong>Upload to gofile.io</strong> Upload saved gallery images to gofile.io and get the qr code to access your uploaded photo - link/image expires after 24 hours. Please note that this function is mainly for No Magic Mode because your captured photos are already uploaded to the rabbit hole.<br>
+                            <strong>Magic Transform:</strong> Type custom prompts or use presets on gallery images. If none used, click Magic button to randomize (.<br>
+                            <strong>Edit Images:</strong> Tap the Edit button (✏️) when viewing a photo to access professional editing tools (see Edit Image Features section below for full details).
+                        </p>
+                    </div>
+
+                    <!-- Uploading Images -->
+                    <div id="section-uploading-images" class="tutorial-section">
+                        <h4 class="tutorial-heading">📥 Uploading Images</h4>
+                        <p class="tutorial-text">
+                            You can import images from the web directly into your gallery using QR codes (special thanks to WWTV). Here's how:<br><br>
+                            <strong>Step-by-Step Process:</strong><br>
+                            1. Upload your image you want imported to <strong>catbox.moe</strong> (free, no account needed)<br>
+                            2. Copy the <strong>direct link</strong> (must end in .png, .jpg, .jpeg, .gif, or .webp)<br>
+                            3. Go to <strong>qr-code-generator.com</strong> and paste the direct link<br>
+                            4. Generate and download/display the QR code<br>
+                            5. Go to menu (☰)/settings in the Magic Kamera plugin<br>
+                            6. Select the resolution of the image under Import Settings<br>
+                            7. Exit settings and menu<br>  
+                            8. Go to gallery (🖼️)<br>
+                            9. Press the Import button<br>
+                            10. Press the Scan QR Code button<br>
+                            11. Point your R1 camera at the QR code<br>
+                            12. Wait a few...the modal will close and the image will be optimized and saved to your gallery!<br><br>
+                            
+                            <strong>⚠️ IMPORTANT - Verify Your Link:</strong><br>
+                            Before generating the QR code, paste the link into a browser:<br>
+                            ✅ <strong>GOOD:</strong> Shows ONLY the image (no webpage around it) - will work!<br>
+                            ❌ <strong>BAD:</strong> Shows a webpage with the image embedded - won't work!<br><br>
+                            <strong>Notes:</strong><br>
+                            • Imported images are automatically default resized to 640x480 for optimal storage (changed in the settings/Import Settings)<br>
+                            • Images are saved to your gallery just like captured photos<br>
+                            • You can apply AI presets to imported images just like captured photos
+                        </p>
+                    </div>
+             
+                    <!-- Edit Image Features -->
+                    <div id="section-edit-image" class="tutorial-section">
+                        <h4 class="tutorial-heading">✏️ Edit Image Features</h4>
+                        <p class="tutorial-text">
+                            <strong>How to Access:</strong> While viewing any photo in full-screen, tap the Edit button (✏️) located in the top-right corner of the screen.<br><br>
+                            
+                            <strong>Available Tools:</strong><br>
+                            The image editor provides several professional editing tools located on the right side of the screen:<br><br>
+                            
+                            <strong>✂️ Crop:</strong> Tap to activate crop mode. Two orange corner markers appear on your image. Tap and drag the top-left and bottom-right corners to select your desired crop area. Tap Crop again to apply the crop.<br>
+                            
+                            <strong>🔄 Rotate:</strong> Rotates your image 90 degrees clockwise. Tap multiple times to rotate to your desired orientation (90°, 180°, 270°, or back to 0°).<br>
+                            
+                            <strong>🔍 Sharpen:</strong> Enhances image sharpness and detail. Tap to apply sharpening effect to make edges and details more crisp and defined.<br>
+                            
+                            <strong>✨ Auto Correct:</strong> Automatically adjusts brightness, contrast, and color balance for optimal image quality. Great for quickly improving photos.<br>
+                            
+                            <strong>Brightness & Contrast Sliders:</strong> Located at the top of the editor, these sliders allow you to manually adjust:<br>
+                            • <strong>Brightness:</strong> Range from -100 (darker) to +100 (brighter)<br>
+                            • <strong>Contrast:</strong> Range from -100 (less contrast) to +100 (more contrast)<br>
+                            Drag the sliders left or right to adjust values in real-time.<br><br>
+                            
+                            <strong>Saving & Undoing:</strong><br>
+                            Located in the top-right corner next to the Edit Image title:<br>
+                            <strong>↶ Undo:</strong> Reverts your last edit. You can undo multiple times to step back through your editing history.<br>
+                            <strong>💾 Save:</strong> Saves all changes to your image. The edited image replaces the original in your gallery.<br>
+                            <strong>×</strong> <strong>Close:</strong> Exits the editor without saving changes (unless you've already tapped Save).<br><br>
+                            
+                            <strong>Editing Tips:</strong><br>
+                            • All edits are applied in the order you make them<br>
+                            • Use Undo if you make a mistake or want to try a different adjustment<br>
+                            • The Auto Correct feature works great as a starting point before manual adjustments<br>
+                            • You can combine multiple edits (crop, rotate, sharpen, and adjust brightness/contrast) on the same image<br>
+                            • Remember to tap Save when you're happy with your edits!
+                        </p>
+                    </div>
+
+                    <!-- Settings -->
+                    <div id="section-settings" class="tutorial-section">
+                        <h4 class="tutorial-heading">⚙️ Settings</h4>
+                        <p class="tutorial-text">
+                            <strong>Resolution:</strong> VGA (640x480) to HD (3264x2448). If you want images to appear in magic gallery, choose lower settings.<br>
+                            <strong>Aspect Ratio:</strong> Choose 1:1 square or 16:9 letterbox, or if unchecked neither. Default is neither.<br>
+                            <strong>Burst Settings:</strong> Number of photos and capture speed<br>
+                            <!-- <strong>White Balance:</strong> Adjust color temperature of image so white objects appear white and colors realistic<br> -->
+                            <strong>Timer Settings:</strong> Countdown time and repeat interval<br>
+                            <strong>Master Prompt:</strong> Append text to every AI transformation to customize. This can be accessed from the gallery by pressing the MASTER button in the gallery<br>
+                            <strong>Motion Detection:</strong> Sensitivity, start delay, continuous capture<br>
+                            <strong>Visible Presets:</strong> Select the imported presets you want to see in preset menus. Default all. Can select all, remove individually or remove all (the Ron setting). Each preset has categories indicated at the bottom of the visible preset menu.<br>
+                            <strong>Preset Builder:</strong> Made to follow a sequence. Click return to go to next selection. Select prompt templates and chips to help you create new and exciting presets you want to see in preset menus. Categories must be separated by commas. This is a very useful tool that includes prompting tips.<br>
+                            <strong>No Magic Mode:</strong> Use as regular camera without AI processing. Photos will only save in plugin gallery. Photos will not save to rabbit hole or magic gallery. This setting does not affect prompting in gallery.<br>
+                            <strong>Import Settings:</strong> Select import resolution for external image imported through gallery.<br>
+                            <strong>Reset Database:</strong> Nuclear Option. Only imported presets remain.  All custom work deleted.<br>
+                            <strong>📥 Import Presets:</strong> Import from our external library of presets. Import only the ones you want by checking them individually or ✓ All (Ron setting - ✗ None). Once you select the ones you want to import, click the Import button. NOTE: Previously imported presets remain checked. To delete previously imported presets from the Magic Kamera, delete them from the Main Menu. You can import them again if you like. Any new presets added to our external library of presets, will be unchecked (check regularly for new ones as we are constantly updating this list).<br>
+                            <strong>🔄 Check for Updates:</strong> Check for new or modified presets.<br>
+                            <strong>Tutorial:</strong> What you are currently reading.
+                       </p>
+                    </div>
+
+                    <!-- Tips & Tricks -->
+                    <div id="section-tips-tricks" class="tutorial-section">
+                        <h4 class="tutorial-heading">💡 Tips & Tricks</h4>
+                        <p class="tutorial-text">
+                            • <strong>Add to Favorites:</strong> In the menu, tap the star (☆) next to presets you love<br>
+                            • <strong>Filter Presets:</strong> Use the search box to quickly find styles<br>
+                            • <strong>Pinch to Zoom:</strong> Zoom in/out on the camera feed. Gallery also supports pinch to zoom<br>
+                            • <strong>Aspect Ratio change:</strong> Get the best results with either 1:1 or 16:9<br>
+                            • <strong>Custom Prompts:</strong> In gallery, type your own AI instructions<br>
+                            • <strong>Multiple Presets:</strong> Apply several styles to one photo sequentially<br>
+                            • <strong>Offline Queue:</strong> Photos queue automatically when offline and sync later
+                        </p>
+                    </div>
+
+                    <!-- Advanced Features -->
+                    <div id="section-advanced-features" class="tutorial-section">
+                        <h4 class="tutorial-heading">🔧 Advanced Features</h4>
+                        <p class="tutorial-text">
+                            <strong>Category Searching:</strong> All presets are categorized. You can see these categories at the bottom of the Visible Preset list menu when a particular preset is highlighted. Therefore, if you see a preset that you like, you can do a search for similar presets that share that category (*best to do this in the Visible Preset Menu). You can also click on the desired category on the bottom to filter all presets in that category as well.<br>
+
+                            <strong>Master Prompt:</strong> Append text to every AI transformation to customize. Many presets benefit from this feature. For example, if you activate Master Prompt (this must be done first) and add two lines: The first line- name: Ron G and the second line- it is Easter. Then you select preset HAPPY HOLIDAYS...this will transform the subject of the picture into the subject wearing an Easter bunny costume (preferably pink) and picture will be captioned with the name Ron G. Since all presets are categorized you can do a search for "master" or "master prompt" and all presets that benefit from master prompting appear (*best to do this in the Visible Preset Menu).
+                        </p>
+                    </div>
+
+                    <!-- Troubleshooting -->
+                    <div id="section-troubleshooting" class="tutorial-section">
+                        <h4 class="tutorial-heading">🔍 Troubleshooting</h4>
+                        <p class="tutorial-text">
+                            <strong>AI transformation not working:</strong> If you took a picture and the rabbit did not respond indicating picture is being transformed/prepared, first check your settings to see if NO MAGIC mode is enabled. Disable if you want the Magic to happen. If this is not the solution, check your network connections. <br>
+All of the presets are optimized to avoid "camera ran dry" or "content filter" issues.  However, if you get a camera ran dry or content filter message. Sometimes it helps re-prompting it over and over until you break through the content filer overlords. You may also edit the prompt (avoid using offensive language, and trademark/copyrighted words). *v5 Magic Kamera MDRE ©2026
+                        </p>
+                    </div>
+
+                </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Style Editor Modal -->
+        <div id="style-editor" class="style-editor" style="display: none;">
+            <div class="style-editor-content">
+                <div class="style-editor-header">
+                    <h3 id="editor-title">Edit Style</h3>
+                    <div class="style-editor-header-buttons">
+                        <button id="save-style" class="save-button-header">Save</button>
+                        <button id="delete-style" class="delete-button-header" style="display: none;">Delete</button>
+                        <button id="close-editor" class="close-button">×</button>
+                    </div>
+                </div>
+                <div class="style-editor-body" tabindex="0">
+                    <input type="text" id="style-name" class="style-input" placeholder="Style name">
+                    <input type="text" id="style-category" class="style-input" placeholder="Categories (comma-separated)">
+                    <textarea id="style-message" class="style-textarea" placeholder="AI prompt for this style"></textarea>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Gallery Modal -->
+        <div id="gallery-modal" class="gallery-modal" style="display: none;">
+            <div class="gallery-content">
+                <div class="gallery-header">
+                    <h3>Gallery (<span id="gallery-count">0</span>)</h3>
+                    <button id="gallery-import-button" class="batch-toggle-button">Import</button>
+                    <button id="batch-mode-toggle" class="batch-toggle-button">Select</button>
+                    <button id="close-gallery" class="close-button">×</button>
+            </div>
+                
+                <!-- Batch Selection Controls -->
+                <div id="batch-controls" class="batch-controls" style="display: none;">
+                    <button id="batch-select-all" class="batch-control-button">Select All</button>
+                    <button id="batch-deselect-all" class="batch-control-button">Deselect All</button>
+                    <button id="batch-cancel" class="batch-control-button">Cancel</button>
+                </div>
+                 
+                <div class="gallery-scroll-container">
+                    <div class="gallery-controls">
+                        <div class="date-filter-buttons">
+                            <button id="gallery-start-date-btn" class="date-filter-button">
+                                <span class="date-button-text">Start</span>
+                            </button>
+                            <button id="gallery-end-date-btn" class="date-filter-button">
+                                <span class="date-button-text">End</span>
+                            </button>
+                        </div>
+                        <select id="gallery-sort-order" class="gallery-filter-select">
+                            <option value="newest">Newest First</option>
+                            <option value="oldest">Oldest First</option>
+                        </select>
+                    </div>
+                    <div id="gallery-grid" class="gallery-grid">
+                        <!-- Gallery images will be dynamically added here -->
+                    </div>
+                    <div id="gallery-pagination" class="gallery-pagination" style="display: none;">
+                        <button id="prev-page" class="pagination-button">‹ Prev</button>
+                        <span id="page-info" class="page-info">Page 1 of 1</span>
+                        <button id="next-page" class="pagination-button">Next ›</button>
+                    </div>
+                </div>
+            <div id="batch-action-bar" class="batch-action-bar" style="display: none;">
+                    <span id="batch-selected-count" class="batch-selected-count">0 selected</span>
+                    <div class="batch-actions-group">
+                        <button id="batch-apply-preset" class="batch-action-button" disabled>Apply Preset</button>
+                        <button id="batch-delete" class="batch-action-button delete" disabled>Delete</button>
+                    </div>
+                </div>
+            </div>
+            <div id="gallery-status-message" class="gallery-status-message" style="display: none;"></div>
+            <input type="date" id="gallery-start-date" class="hidden-date-input">
+            <input type="date" id="gallery-end-date" class="hidden-date-input">
+        </div>
+        
+        <!-- Image Viewer Modal -->
+        <div id="image-viewer" class="image-viewer" style="display: none;">
+    <div class="image-viewer-content">
+        <button id="upload-viewer-image" class="viewer-upload-button">📤</button>
+        <button id="delete-viewer-image" class="viewer-delete-button">🗑️</button>
+        <button id="edit-viewer-image" class="viewer-edit-button">✏️</button>
+        <button id="mp-viewer-button" class="viewer-mp-button">MASTER</button>
+        <button id="close-viewer" class="viewer-close-button">×</button>
+                <div class="image-viewer-container">
+                    <img id="viewer-image" class="viewer-image" alt="Viewing image">
+                </div>
+                <div class="viewer-controls">
+            <div class="viewer-prompt-section">
+                 <textarea id="viewer-prompt" class="viewer-prompt-input" placeholder="Enter prompt or load preset. If you do not, tapping the Magic button randomizes the preset..."></textarea>
+                <div>
+                    <button id="load-preset-button" class="load-preset-button">Load Preset</button>
+                    <button id="multi-preset-button" class="load-preset-button" style="background: #9C27B0;">Multi Preset</button>
+                    <button id="magic-button" class="magic-button">✨ Magic</button>
+                </div>
+            </div>
+        </div>
+            </div>
+        </div>
+        
+        <!-- Image Editor Modal -->
+        <div id="image-editor-modal" class="image-editor-modal" style="display: none;">
+            <div class="image-editor-content">
+                <div class="image-editor-header">
+                    <h3>Edit Image</h3>
+                    <div class="editor-header-buttons">
+                        <button id="undo-edit-button" class="editor-header-undo-button">↶ Undo</button>
+                        <button id="save-edit-button" class="editor-header-save-button">💾 Save</button>
+                        <button id="close-image-editor" class="close-button">×</button>
+                    </div>
+                </div>
+                
+                <!-- Brightness and Contrast Sliders (on top of image) -->
+                <div class="editor-top-controls">
+                    <div class="editor-slider-group">
+                        <label>Brightness</label>
+                        <input type="range" id="brightness-slider" min="-100" max="100" value="0" step="1">
+                        <span id="brightness-value">0</span>
+                    </div>
+                    <div class="editor-slider-group">
+                        <label>Contrast</label>
+                        <input type="range" id="contrast-slider" min="-100" max="100" value="0" step="1">
+                        <span id="contrast-value">0</span>
+                    </div>
+                </div>
+                
+                <!-- Main Editor Area: Image Left, Buttons Right -->
+                <div class="editor-main-area">
+                    <!-- Image Canvas Area -->
+                    <div class="editor-image-container">
+                        <canvas id="editor-canvas" class="editor-canvas"></canvas>
+                        <div id="crop-overlay" class="crop-overlay" style="display: none;">
+                            <div class="crop-corner crop-top-left"></div>
+                            <div class="crop-corner crop-bottom-right"></div>
+                            <div class="crop-hint">Tap corners</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Edit Buttons Column (right side) -->
+                    <div class="editor-button-column">
+                        <button id="crop-button" class="editor-action-button">✂️<br>Crop</button>
+                        <button id="rotate-button" class="editor-action-button">🔄<br>Rotate</button>
+                        <button id="sharpen-button" class="editor-action-button">🔍<br>Sharpen</button>
+                        <button id="autocorrect-button" class="editor-action-button">✨<br>Auto</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Preset Selector Modal -->
+        <div id="preset-selector" class="preset-selector" style="display: none;">
+            <div class="preset-selector-content">
+                <div class="preset-selector-header">
+    <h3>Select Preset (<span id="preset-count">0</span>)</h3>
+    <div class="menu-nav-buttons">
+        <button id="preset-selector-jump-up" class="menu-jump-button-small" title="Scroll up">↑</button>
+        <button id="preset-selector-jump-down" class="menu-jump-button-small" title="Scroll down">↓</button>
+        <button id="close-preset-selector" class="close-button">×</button>
+    </div>
+</div>
+                <input type="text" id="preset-filter" class="style-filter" placeholder="Filter presets...">
+                <div id="preset-list" class="preset-list">
+                    <!-- Presets will be dynamically added here -->
+                </div>
+                <div id="preset-selector-category-hint" class="preset-selector-category-footer" style="display: none;"></div>
+            </div>
+        </div>
+        
+        <!-- Queue Manager Modal -->
+        <div id="queue-manager" class="queue-manager" style="display: none;">
+            <div class="queue-manager-content">
+                <div class="queue-manager-header">
+                    <h3>Queued Photos</h3>
+                    <button id="close-queue-manager" class="close-button">×</button>
+                </div>
+                <div id="queue-list" class="queue-list">
+                    <!-- Queued items will be dynamically added here -->
+                </div>
+                <div class="queue-actions">
+                    <button id="sync-all" class="sync-button">Sync All</button>
+                    <button id="clear-queue" class="delete-button">Clear Queue</button>
+                </div>
+           </div>
+        </div>
+
+        <!-- QR Scanner Modal -->
+        <div id="qr-scanner-modal" class="qr-scanner-modal" style="display: none;">
+            <div class="qr-scanner-content">
+                <div class="qr-scanner-header">
+                    <h4>Scan QR Code to Import</h4>
+                    <button id="close-qr-scanner" class="close-button">×</button>
+                </div>
+                <div class="qr-scanner-video-container">
+                    <video id="qr-scanner-video" autoplay playsinline></video>
+                    <canvas id="qr-scanner-canvas" style="display: none;"></canvas>
+                </div>
+                <div id="qr-scanner-status" class="qr-scanner-status">Ready to scan</div>
+                <button id="qr-scan-button" class="qr-scan-button">Scan QR Code</button>
+            </div>
+        </div>
+
+        <!-- QR Code Modal -->
+        <div id="qr-modal" class="qr-modal" style="display: none;">
+            <div class="qr-modal-content">
+                <div class="qr-modal-header">
+                    <h4>Scan to View Image</h4>
+                    <button id="close-qr-modal" class="close-button">×</button>
+                </div>
+                <div id="qr-code-container" class="qr-code-container"></div>
+                <p id="qr-url-text" class="qr-url-text"></p>
+                <p class="qr-expiry-text">Link expires in 24 hours</p>
+            </div>
+        </div>
+        <!-- Custom Alert/Confirm Modal -->
+        <div id="custom-alert-modal" class="custom-alert-modal" style="display: none;">
+          <div class="custom-alert-overlay"></div>
+          <div class="custom-alert-content">
+            <div class="custom-alert-message" id="custom-alert-message"></div>
+            <div class="custom-alert-buttons" id="custom-alert-buttons">
+              <button class="custom-alert-btn custom-alert-btn-primary" id="custom-alert-ok">OK</button>
+            </div>
+          </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://unpkg.com/jsqr@1.4.0/dist/jsQR.js"></script>
+</body>
+</html>
