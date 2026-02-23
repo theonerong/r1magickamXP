@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Magic Kamera</title>
-  <script type="module" crossorigin src="./assets/main-oYnESYxM.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/main-CeFcQl-m.css">
+  <script type="module" crossorigin src="./assets/main-DzHooxYb.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/main-fIEnAODg.css">
 </head>
 <body>
     <div id="app">
@@ -108,6 +108,7 @@
                 <div class="styles-menu-header">
                     <h2>Menu</h2>
                     <div class="menu-nav-buttons">
+                        <button id="add-preset-button" class="menu-jump-button" title="Create New Preset" style="background: #4CAF50;">+</button>
                         <button id="jump-to-top" class="menu-jump-button" title="Jump to top">↑</button>
                         <button id="jump-to-bottom" class="menu-jump-button" title="Jump to bottom">↓</button>
                         <button id="close-menu" class="close-button">×</button>
@@ -505,6 +506,7 @@
     <h3>Preset Builder</h3>
     <div class="menu-nav-buttons">
         <button id="preset-builder-delete" class="menu-jump-button" style="display: none; background: #d32f2f;">Delete</button>
+        <button id="preset-builder-save-copy" class="menu-jump-button" style="background: #9C27B0;">Save Copy</button>
         <button id="preset-builder-save" class="menu-jump-button">Save</button>
         <button id="preset-builder-clear" class="menu-jump-button">Clear</button>
     </div>
@@ -1064,7 +1066,9 @@ All of the presets are optimized to avoid "camera ran dry" or "content filter" i
                 </div>
                 <div class="viewer-controls">
             <div class="viewer-prompt-section">
-                 <textarea id="viewer-prompt" class="viewer-prompt-input" placeholder="Enter prompt or load preset. If you do not, tapping the Magic button randomizes the preset..."></textarea>
+                 <button id="prompt-button" class="prompt-button" style="width: 100%; padding: 12px; background: #2196F3; color: white; border: none; border-radius: 4px; font-size: 14px; cursor: pointer; margin-bottom: 10px;">📝 Prompt</button>
+                 <!-- Hidden prompt storage - used by existing code -->
+                 <textarea id="viewer-prompt" class="viewer-prompt-input" placeholder="Prompt value stored here" style="display: none;"></textarea>
                 <div>
                     <button id="load-preset-button" class="load-preset-button">Load Preset</button>
                     <button id="multi-preset-button" class="load-preset-button" style="background: #9C27B0;">Multi Preset</button>
